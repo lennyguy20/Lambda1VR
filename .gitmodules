@@ -14,3 +14,8 @@
 [submodule "Projects/Android/jni/src/hlsdk-xash3d_theyhunger"]
 	path = Projects/Android/jni/src/hlsdk-xash3d_theyhunger
 	url = https://github.com/DrBeef/hlsdk-xash3d_theyhunger
+
+[submodule "Projects/Android/jni/src/hlsdk-xash3d-asheep"]
+	path = Projects/Android/jni/src/hlsdk-xash3d-asheep
+	url = https://github.com/lennyguy20/hlsdk-xash3d
+	branch = asheep

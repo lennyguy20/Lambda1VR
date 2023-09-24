@@ -523,6 +523,11 @@ import static android.system.Os.setenv;
 			{
 				setenv("XASH3D_LIBSUFFIX", "_theyhunger", true);
 			}
+			else if (game.equalsIgnoreCase("asheep"))
+			{
+				setenv("XASH3D_LIBSUFFIX", "_asheep", true);
+			}
+
 			else
 			{
 				setenv("XASH3D_LIBSUFFIX", "", true);
