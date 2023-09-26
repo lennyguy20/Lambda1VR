@@ -23,6 +23,10 @@
 
 #define MAX_CLIENTS 32
 
+extern BEAM *pBeam;
+extern BEAM *pBeam2;
+extern TEMPENTITY *pFlare;	// Vit_amiN
+
 extern float g_lastFOV;			// Vit_amiN
 
 /// USER-DEFINED SERVER MESSAGE HANDLERS
@@ -41,9 +45,6 @@ int CHud::MsgFunc_ResetHUD( const char *pszName, int iSize, void *pbuf )
 		pList = pList->pNext;
 	}
 
-	// reset sensitivity
-	m_flMouseSensitivity = 0;
-
 	// reset concussion effect
 	m_iConcussionEffect = 0;
 
@@ -54,11 +55,8 @@ int CHud::MsgFunc_ResetHUD( const char *pszName, int iSize, void *pbuf )
 	return 1;
 }
 
-void CAM_ToFirstPerson( void );
-
 void CHud::MsgFunc_ViewMode( const char *pszName, int iSize, void *pbuf )
 {
-	CAM_ToFirstPerson();
 }
 
 void CHud::MsgFunc_InitHUD( const char *pszName, int iSize, void *pbuf )
@@ -72,6 +70,10 @@ void CHud::MsgFunc_InitHUD( const char *pszName, int iSize, void *pbuf )
 			pList->p->InitHUDData();
 		pList = pList->pNext;
 	}
+
+	//Probably not a good place to put this.
+	pBeam = pBeam2 = NULL;
+	pFlare = NULL;	// Vit_amiN: clear egon's beam flare
 }
 
 int CHud::MsgFunc_GameMode( const char *pszName, int iSize, void *pbuf )

@@ -181,12 +181,15 @@ public:
 	CBasePlayerItem *m_pClientActiveItem;  // client version of the active item
 	CBasePlayerItem *m_pLastItem;
 
+	CBaseEntity*	m_LastLocalUsableEntity;
+    entvars_s		m_LastLocalUsableEntityRenderFX;
+	CBaseEntity*	m_LastLocalUsableEntityAlt;
+    entvars_s		m_LastLocalUsableEntityAltRenderFX;
+
 	// shared ammo slots
 	int	m_rgAmmo[MAX_AMMO_SLOTS];
 	int	m_rgAmmoLast[MAX_AMMO_SLOTS];
 
-	Vector				m_vecAutoAim;
-	BOOL				m_fOnTarget;
 	int					m_iDeaths;
 	float				m_iRespawnFrames;	// used in PlayerDeathThink() to make sure players can always respawn
 
@@ -238,6 +241,7 @@ public:
 	virtual int		ObjectCaps( void ) { return CBaseMonster :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 	virtual void	Precache( void );
 	BOOL			IsOnLadder( void );
+	BOOL 			FlashlightInInventory( void );
 	BOOL			FlashlightIsOn( void );
 	void			FlashlightTurnOn( void );
 	void			FlashlightTurnOff( void );
@@ -281,6 +285,7 @@ public:
 	void WaterMove( void );
 	void EXPORT PlayerDeathThink( void );
 	void PlayerUse( void );
+	void PlayerUseInternal( bool highlightActionables, Vector handOrigin, Vector handAngles, int inUseType );
 
 	void CheckSuitUpdate();
 	void SetSuitUpdate( const char *name, int fgroup, int iNoRepeat );
@@ -305,7 +310,7 @@ public:
 	void SetCustomDecalFrames( int nFrames );
 	int GetCustomDecalFrames( void );
 
-	Vector m_vecLastViewAngles;
+	void TabulateAmmo( void );
 
 	float m_flStartCharge;
 	float m_flAmmoStartCharge;
@@ -323,10 +328,33 @@ public:
 
 	float m_flNextChatTime;
 
-	void Holster();
-	BOOL m_bHaveSuit;
-	BOOL m_bIsHolster;
+	Vector m_vecLastViewAngles;
+
 	bool m_bSentBhopcap; // If false, the player just joined and needs a bhopcap message.
+
+	// Methods and members for VR stuff - Max Vollmer, 2017-08-18
+private:
+	Vector vr_weaponOffset;
+	Vector vr_weaponAngles;
+	Vector vr_weaponVelocity;
+	Vector2D vr_ClientOriginOffset;
+	Vector vr_offhandOffset;
+	Vector vr_offhandAngles;
+
+public:
+	const Vector GetWeaponPosition();
+	const Vector GetWeaponAngles();
+	const Vector GetWeaponViewAngles();
+	const Vector GetWeaponVelocity();
+	const Vector GetOffhandPosition();
+	const Vector GetOffhandAngles();
+	const Vector GetClientOrigin();			// Used by UpdateClientData to send player origin to client
+	const Vector GetClientViewOfs();		// Used by UpdateClientData to send player view_ofs to client
+	bool IsWeaponUnderWater();
+	bool IsWeaponPositionValid();
+	void ClearClientOriginOffset();			// Called by Util_SetOrigin
+	void UpdateVRRelatedPositions(const Vector & vr_hmdOffset, const Vector & vr_weaponOffset, const Vector & weaponAngles, const Vector & weaponVelocity,
+									const Vector & vr_offhandOffset, const Vector & vr_offhandAngles);
 };
 
 #define AUTOAIM_2DEGREES  0.0348994967025

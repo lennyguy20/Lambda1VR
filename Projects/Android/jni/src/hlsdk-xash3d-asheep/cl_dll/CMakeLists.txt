@@ -25,12 +25,12 @@ project (CLDLL)
 
 set (CLDLL_LIBRARY client)
 
-add_definitions(-DCLIENT_DLL)
+
+add_definitions(-DCLIENT_WEAPONS -DCLIENT_DLL)
 
 if(NOT MSVC)
 	add_compile_options(-fno-exceptions) # GCC/Clang flag
 	add_compile_options(-Wno-write-strings) # GCC/Clang flag
-	add_compile_options(-fvisibility=hidden) # GCC/Clang flag
 	add_definitions(-D_LINUX -DLINUX) # It seems enough for all non-Win32 systems
 	add_definitions(-Dstricmp=strcasecmp -Dstrnicmp=strncasecmp)
 	if(NOT MINGW)
@@ -46,6 +46,20 @@ endif()
 
 
 set (CLDLL_SOURCES
+	../dlls/crossbow.cpp
+	../dlls/crowbar.cpp
+	../dlls/egon.cpp
+	../dlls/gauss.cpp
+	../dlls/handgrenade.cpp
+	../dlls/hornetgun.cpp
+	../dlls/mp5.cpp
+	../dlls/python.cpp
+	../dlls/rpg.cpp
+	../dlls/satchel.cpp
+	../dlls/shotgun.cpp
+	../dlls/squeakgrenade.cpp
+	../dlls/tripmine.cpp
+	../dlls/glock.cpp
 	ev_hldm.cpp
 	hl/hl_baseentity.cpp
 	hl/hl_events.cpp

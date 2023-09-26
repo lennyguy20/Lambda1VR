@@ -104,14 +104,9 @@ BOOL CGlock::Deploy()
 	return DefaultDeploy( "models/v_9mmhandgun.mdl", "models/p_9mmhandgun.mdl", GLOCK_DRAW, "onehanded", /*UseDecrement() ? 1 : 0*/ 0 );
 }
 
-void CGlock::Holster( int skiplocal /* = 0 */ )
-{
-        DefaultHolster( GLOCK_HOLSTER, 1.2 );
-}
-
 void CGlock::SecondaryAttack( void )
 {
-	GlockFire( 0.1, 0.2, FALSE );
+	//GlockFire( 0.1, 0.2, FALSE );
 }
 
 void CGlock::PrimaryAttack( void )
@@ -121,18 +116,12 @@ void CGlock::PrimaryAttack( void )
 
 void CGlock::GlockFire( float flSpread, float flCycleTime, BOOL fUseAutoAim )
 {
-	if( m_pPlayer->m_bIsHolster )
-	{
-		WeaponIdle();
-		return;
-	}
-
 	if( m_iClip <= 0 )
 	{
 		if( m_fFireOnEmpty )
 		{
 			PlayEmptySound();
-			m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.2;
+			m_flNextPrimaryAttack = GetNextAttackDelay( 0.2 );
 		}
 
 		return;
@@ -165,23 +154,14 @@ void CGlock::GlockFire( float flSpread, float flCycleTime, BOOL fUseAutoAim )
 	}
 
 	Vector vecSrc = m_pPlayer->GetGunPosition();
-	Vector vecAiming;
-
-	if( fUseAutoAim )
-	{
-		vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_10DEGREES );
-	}
-	else
-	{
-		vecAiming = gpGlobals->v_forward;
-	}
+	Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
 
 	Vector vecDir;
 	vecDir = m_pPlayer->FireBulletsPlayer( 1, vecSrc, vecAiming, Vector( flSpread, flSpread, flSpread ), 8192, BULLET_PLAYER_9MM, 0, 0, m_pPlayer->pev, m_pPlayer->random_seed );
 
 	PLAYBACK_EVENT_FULL( flags, m_pPlayer->edict(), fUseAutoAim ? m_usFireGlock1 : m_usFireGlock2, 0.0, (float *)&g_vecZero, (float *)&g_vecZero, vecDir.x, vecDir.y, 0, 0, ( m_iClip == 0 ) ? 1 : 0, 0 );
 
-	m_flNextPrimaryAttack = m_flNextSecondaryAttack = UTIL_WeaponTimeBase() + flCycleTime;
+	m_flNextPrimaryAttack = m_flNextSecondaryAttack = GetNextAttackDelay( flCycleTime );
 
 	if( !m_iClip && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0 )
 		// HEV suit - indicate out of ammo condition
@@ -192,11 +172,7 @@ void CGlock::GlockFire( float flSpread, float flCycleTime, BOOL fUseAutoAim )
 
 void CGlock::Reload( void )
 {
-	if( m_pPlayer->m_bIsHolster )
-	{
-		WeaponIdle();
-		return;
-	}
+	CBasePlayerWeapon::Reload();
 
 	if( m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0 || m_iClip == GLOCK_MAX_CLIP )
 		return;
@@ -216,16 +192,6 @@ void CGlock::Reload( void )
 
 void CGlock::WeaponIdle( void )
 {
-	if( m_pPlayer->m_bIsHolster )
-	{
-		if( m_flTimeWeaponIdle <= UTIL_WeaponTimeBase() )
-		{
-			m_pPlayer->m_bIsHolster = FALSE;
-			Deploy();
-		}
-		return;
-	}
-
 	ResetEmptySound();
 
 	m_pPlayer->GetAutoaimVector( AUTOAIM_10DEGREES );

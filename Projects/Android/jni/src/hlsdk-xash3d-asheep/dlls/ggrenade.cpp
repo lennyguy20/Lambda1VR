@@ -356,7 +356,7 @@ void CGrenade::Spawn( void )
 	m_fRegisteredSound = FALSE;
 }
 
-CGrenade *CGrenade::ShootContact( entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float flDmg )
+CGrenade *CGrenade::ShootContact( entvars_t *pevOwner, Vector vecStart, Vector vecVelocity )
 {
 	CGrenade *pGrenade = GetClassPtr( (CGrenade *)NULL );
 	pGrenade->Spawn();
@@ -377,7 +377,7 @@ CGrenade *CGrenade::ShootContact( entvars_t *pevOwner, Vector vecStart, Vector v
 	// Explode on contact
 	pGrenade->SetTouch( &CGrenade::ExplodeTouch );
 
-	pGrenade->pev->dmg = flDmg;
+	pGrenade->pev->dmg = gSkillData.plrDmgM203Grenade;
 
 	return pGrenade;
 }

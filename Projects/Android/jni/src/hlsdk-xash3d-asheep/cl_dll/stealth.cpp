@@ -13,9 +13,9 @@
 *
 ****/
 //
-// Train.cpp
+// Stealth.cpp
 //
-// implementation of CHudAmmo class
+// implementation of CHudStealth class
 //
 
 #include "hud.h"
@@ -24,11 +24,11 @@
 #include <stdio.h>
 #include "parsemsg.h"
 
-DECLARE_MESSAGE( m_Train, Train )
+DECLARE_MESSAGE( m_Stealth, Stealth )
 
-int CHudTrain::Init( void )
+int CHudStealth::Init( void )
 {
-	HOOK_MESSAGE( Train );
+	HOOK_MESSAGE( Stealth );
 
 	m_iPos = 0;
 	m_iFlags = 0;
@@ -37,40 +37,36 @@ int CHudTrain::Init( void )
 	return 1;
 }
 
-int CHudTrain::VidInit( void )
+int CHudStealth::VidInit( void )
 {
 	m_hSprite = 0;
 
 	return 1;
 }
 
-int CHudTrain::Draw( float fTime )
+int CHudStealth::Draw( float fTime )
 {
 	if( !m_hSprite )
-		m_hSprite = LoadSprite( "sprites/%d_train.spr" );
+		m_hSprite = LoadSprite( "sprites/s_stealth.spr" );
 
-	if( m_iPos )
-	{
-		int r, g, b, x, y;
+    int r, g, b, x, y;
 
-		UnpackRGB( r, g, b, RGB_YELLOWISH );
-		SPR_Set( m_hSprite, r, g, b );
+    UnpackRGB( r, g, b, RGB_YELLOWISH );
+    SPR_Set( m_hSprite, r, g, b );
 
-		// This should show up to the right and part way up the armor number
-		y = (ScreenHeight * 0.6f) - SPR_Height( m_hSprite, 0 ) - gHUD.m_iFontHeight;
-		x = (int)(ScreenWidth / 3 + SPR_Width( m_hSprite, 0 ) / 4 + GetStereoDepthOffset() );
+    y = (int)(ScreenHeight * 0.36f);
+    x = (int)((ScreenWidth * 0.66f) + GetStereoDepthOffset() );
 
-		SPR_DrawAdditive( m_iPos - 1, x, y, NULL );
-	}
+    SPR_DrawAdditive( 0, x, y, NULL );
 
 	return 1;
 }
 
-int CHudTrain::MsgFunc_Train( const char *pszName, int iSize, void *pbuf )
+int CHudStealth::MsgFunc_Stealth( const char *pszName, int iSize, void *pbuf )
 {
 	BEGIN_READ( pbuf, iSize );
 
-	// update Train data
+	// update Stealth data
 	m_iPos = READ_BYTE();
 
 	if( m_iPos )

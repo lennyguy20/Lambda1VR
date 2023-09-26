@@ -22,9 +22,16 @@
 #pragma once
 #ifndef HUD_H
 #define HUD_H
-#define RGB_YELLOWISH 0x004040FF //64,64,255 Blue Azure Sheep hud
+
+#ifdef BSHIFT
+#define RGB_YELLOWISH 0x005F5FFF // 95, 95, 255
+#define RGB_REDISH 0x00FF1010 // 255, 16, 16
+#define RGB_GREENISH 0x0000A000 // 0, 160, 0
+#else
+#define RGB_YELLOWISH 0x00FFA000 //255,160,0
 #define RGB_REDISH 0x00FF1010 //255,160,0
-#define RGB_GREENISH 0x008080FF //128,128,255
+#define RGB_GREENISH 0x0000A000 //0,160,0
+#endif
 
 #include "wrect.h"
 #include "cl_dll.h"
@@ -79,6 +86,7 @@ public:
 	virtual void Think( void ) { return; }
 	virtual void Reset( void ) { return; }
 	virtual void InitHUDData( void ) {}		// called every time a server is connected to
+	static int GetStereoDepthOffset();
 };
 
 struct HUDLIST
@@ -125,7 +133,9 @@ public:
 	void _cdecl UserCmd_Close( void );
 	void _cdecl UserCmd_NextWeapon( void );
 	void _cdecl UserCmd_PrevWeapon( void );
-
+	void _cdecl UserCmd_NextWeaponSlot(void);
+	void _cdecl UserCmd_PrevWeaponSlot(void);
+	
 private:
 	float m_fFade;
 	RGBA  m_rgba;
@@ -190,6 +200,22 @@ public:
 	int VidInit( void );
 	int Draw( float flTime );
 	int MsgFunc_Train( const char *pszName, int iSize, void *pbuf );
+
+private:
+	HSPRITE m_hSprite;
+	int m_iPos;
+};
+
+//
+//-----------------------------------------------------
+//
+class CHudStealth : public CHudBase
+{
+public:
+	int Init( void );
+	int VidInit( void );
+	int Draw( float flTime );
+	int MsgFunc_Stealth( const char *pszName, int iSize, void *pbuf );
 
 private:
 	HSPRITE m_hSprite;
@@ -570,8 +596,7 @@ private:
 	client_sprite_t				*m_pSpriteList;
 	int							m_iSpriteCount;
 	int							m_iSpriteCountAllRes;
-	float						m_flMouseSensitivity;
-	int							m_iConcussionEffect; 
+	int							m_iConcussionEffect;
 
 public:
 	HSPRITE						m_hsprCursor;
@@ -624,6 +649,7 @@ public:
 	CHudGeiger		m_Geiger;
 	CHudBattery		m_Battery;
 	CHudTrain		m_Train;
+	CHudStealth		m_Stealth;
 	CHudFlashlight	m_Flash;
 	CHudMessage		m_Message;
 	CHudStatusBar   m_StatusBar;
@@ -668,8 +694,6 @@ public:
 	int m_iNoConsolePrint;
 
 	void AddHudElem( CHudBase *p );
-
-	float GetSensitivity();
 };
 
 extern CHud gHUD;
